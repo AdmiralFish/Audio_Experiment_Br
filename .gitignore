@@ -1,8 +1,1 @@
 .vscode
-
-# Local Files for Testing
-html/lib/core-2021.1.2.js
-html/lib/data-2021.1.2.js
-html/lib/sound-2021.1.2.js
-html/lib/util-2021.1.2.js
-html/lib/visual-2021.1.2.js
