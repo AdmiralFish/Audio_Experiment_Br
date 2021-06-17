@@ -1,0 +1,13 @@
+word_1,word_2,cue,file_path
+AARDVARK,FALLACY,long_valid,resources/sound/practice_cue0.mp3
+CABLE,REPUBLIC,long_valid,resources/sound/practice_cue1.mp3
+RECENT,TOBACCO,long_valid,resources/sound/practice_cue2.mp3
+EAGER,QUALIFY,short_valid,resources/sound/practice_cue3.mp3
+FIZZY,ELECTRIC,short_valid,resources/sound/practice_cue4.mp3
+NONSENSE,OASIS,short_valid,resources/sound/practice_cue5.mp3
+VACANT,SALVATION,long_foil,resources/sound/practice_cue6.mp3
+BUCKLE,WALLABY,long_foil,resources/sound/practice_cue7.mp3
+DAGGER,EMPHASIS,long_foil,resources/sound/practice_cue8.mp3
+GRUMPY,LABYRINTH,short_foil,resources/sound/practice_cue9.mp3
+SAFFRON,JAVELIN,short_foil,resources/sound/practice_cue10.mp3
+KETCHUP,GONDOLA,short_foil,resources/sound/practice_cue11.mp3
