@@ -64,22 +64,25 @@ textScreen(introText);
 var instructionText = 'You will see a word flash on your screen, followed by a short and possibly ambiguous audio clip of words being spoken.\n\nAfter, you will be presented with four words.\n\nClick the word you heard most clearly.\n\nYou will only have 4 seconds to respond.\n\nWhen you are ready to practice, click the screen.';
 textScreen(instructionText);
 
-// prac_trial Loop
+// prac_trials Loop
 const prac_trialsLoopScheduler = new Scheduler(psychoJS);
-flowScheduler.add(prac_trialsLoopBegin, prac_trialsLoopScheduler);
+flowScheduler.add(trialsLoopBegin, prac_trialsLoopScheduler, 4, 'prac_trials.csv', 'prac_trials', 0);
 flowScheduler.add(prac_trialsLoopScheduler);
-flowScheduler.add(prac_trialsLoopEnd);
+flowScheduler.add(trialsLoopEnd);
 
 var startText = 'The practice trial is now over.\n\nWhen you are ready to begin, click the screen.';
 textScreen(startText);
 
 // trial Loop
-// const trialsLoopScheduler = new Scheduler(psychoJS);
-// flowScheduler.add(trialsLoopBegin, trialsLoopScheduler);
-// flowScheduler.add(trialsLoopScheduler)
-// flowScheduler.add(trialsLoopEnd)
+const trialsLoopScheduler = new Scheduler(psychoJS);
+flowScheduler.add(trialsLoopBegin, trialsLoopScheduler, 4, 'trials.csv', 'trials', 4);
+flowScheduler.add(trialsLoopScheduler)
+flowScheduler.add(trialsLoopEnd)
 
 flowScheduler.add(quitPsychoJS, "The experiment is now complete.\nPress 'Ok' to continue.", true);
+
+var endText = 'Thank you for your time.\n\nThe experiment is now complete.\n\nPlease wait for results to finish uploading before closing the window.'
+textScreen(endText);
 
 // quit if user presses Cancel in dialog box:
 dialogCancelScheduler.add(quitPsychoJS, '', false);
@@ -87,7 +90,8 @@ dialogCancelScheduler.add(quitPsychoJS, '', false);
 // -- RESOURCES --
 let resources = [
     {'name': './resources/speaker_icon.png', 'path': './resources/speaker_icon.png'},
-    {'name': 'prac_trial_computer.csv', 'path': './resources/prac_trial_computer.csv'},// FOR TESTING
+    {'name': 'prac_trials.csv', 'path': './resources/prac_trials.csv'},// FOR TESTING
+    {'name': 'trials.csv', 'path': './resources/trials.csv'},
     {'name': 'foils.csv', 'path': './resources/foils.csv'},
     {'name': 'practice_cue0.mp3', 'path': './resources/practice_cue0.mp3'},   
     {'name': 'resources/practice_cue0.mp3', 'path': './resources/practice_cue0.mp3'},
@@ -115,9 +119,9 @@ function resourceUpdater (csv_path) {
                 resources.push({'name': csv[i][3], 'path': './' + csv[i][3]})
             }}})}
 
-resourceUpdater('./resources/prac_trial_computer.csv')
-// resourceUpdater('PATH')
-console.log(resources)
+resourceUpdater('./resources/prac_trials.csv')
+resourceUpdater('./resources/trials.csv')
+
 // START
 psychoJS.start({
     expName: expName,
@@ -125,7 +129,6 @@ psychoJS.start({
     resources: resources
 });
 
-console.log(psychoJS.resources)
 // Set Logger
 psychoJS.experimentLogger.setLevel(core.Logger.ServerLevel.EXP);
 
@@ -142,11 +145,11 @@ function updateInfo() {
 
     // store frame rate of monitor if we can measure it successfully 
     expInfo['frameRate'] = psychoJS.window.getActualFrameRate();
-    if (typeof expInfo['frameRate'] !== 'undefined')
+    if (typeof expInfo['frameRate'] !== 'undefined') {
         frameDur = 1.0 / Math.round(expInfo['frameRate']);
-    else
+    } else {
         frameDur = 1.0 / 60.0; // couldn't get a reliable measure so guess 
-
+    } 
     // add info from the URL:
     util.addInfoFromUrl(expInfo);
 
@@ -173,6 +176,8 @@ var globalClock, routineTimer, t, frameN, continueRoutine, gotValidClick, prevBu
 var text, textDisplayClock, textDisplayText, textDisplayInput; // init textDisplay Components
 var trialClock, primer, cue_stim, speaker_icon, merged_audio, response_1, response_2, response_3, response_4, response, no_resp // init trial Components
 var locations = [[(- 0.5), 0.5], [0.5, 0.5], [(- 0.5), (- 0.5)], [0.5, (- 0.5)]];
+var cueTargets = ['short_valid', 'long_valid', 'short_foil', 'long_foil'];
+var cueList = []
 
 // Create Randomised Foil List
 var foilList1 = [];
@@ -366,52 +371,55 @@ function textScreen(message, scheduler=flowScheduler) {
     scheduler.add(textDisplayRoutineEnd())
 }
 
-// --- prac_trial loop ---
-var prac_trials;
+// --- prac_trials loop ---
+var trials;
 var currentLoop;
-function prac_trialsLoopBegin(prac_trialsLoopScheduler) {
-    prac_trials = new TrialHandler({
+function trialsLoopBegin(trialsLoopScheduler, nReps, trialList, name, breaks) {
+    trials = new TrialHandler({
         psychoJS: psychoJS,
-        nReps: 2, method: TrialHandler.Method.RANDOM,
+        nReps: nReps, method: TrialHandler.Method.RANDOM,
         extraInfo: expInfo, originPath: undefined,
-        trialList:'prac_trial_computer.csv',
-        seed: undefined, name: 'prac_trials'
+        trialList: trialList,
+        seed: undefined, name: name
     });
 
-    psychoJS.experiment.addLoop(prac_trials); // add the loop to the experiment 
-    currentLoop = prac_trials; // we're now on the current loop
-    let breaks = 4; // Needs to be one more than desired amount of breaks
+    psychoJS.experiment.addLoop(trials); // add the loop to the experiment 
+    currentLoop = trials; // we're now on the current loop
 
-
-    
+    breaks = breaks; // Needs to be one more than desired amount of breaks
+    cueList = []
+    shuffleArray(cueTargets)
 
     // Schedule all the trials in the trialList
-    for (const thisPrac_trial of prac_trials) {
-        const snapshot = prac_trials.getSnapshot();
-        prac_trialsLoopScheduler.add(importConditions(snapshot));
-        prac_trialsLoopScheduler.add(trialRoutineBegin(snapshot));
-        prac_trialsLoopScheduler.add(trialRoutineEachFrame(snapshot));
-        prac_trialsLoopScheduler.add(trialRoutineEnd(snapshot));
+    for (const this_trial of trials) {
+        const snapshot = trials.getSnapshot();
+        shuffleArray(cueTargets)
+        cueList.push(cueTargets.slice())
+
+        trialsLoopScheduler.add(importConditions(snapshot));
+        trialsLoopScheduler.add(trialRoutineBegin(snapshot));
+        trialsLoopScheduler.add(trialRoutineEachFrame(snapshot));
+        trialsLoopScheduler.add(trialRoutineEnd(snapshot));
 
         // add break routines
-        if ((prac_trials.thisN !== 0) && prac_trials.thisN % (prac_trials.nTotal / breaks) === 0) {
-            let restMessage = `Take a break.\n\nPress here when you are ready to begin.\n\n\nYou have completed ${Math.round((prac_trials.thisN) / (prac_trials.nTotal)  * 100)} %`
-            textScreen(restMessage, prac_trialsLoopScheduler)
+        if ((trials.thisN !== 0) && trials.thisN % (trials.nTotal / breaks) === 0) {
+            let restMessage = `Take a break.\n\nPress here when you are ready to begin.\n\n\nYou have completed ${Math.round((trials.thisN) / (trials.nTotal)  * 100)} %`
+            textScreen(restMessage, trialsLoopScheduler)
         }
-        prac_trialsLoopScheduler.add(endLoopIteration(prac_trialsLoopScheduler, snapshot));
+        trialsLoopScheduler.add(endLoopIteration(trialsLoopScheduler, snapshot));
     }
 
     return Scheduler.Event.NEXT;
 }
 
-function prac_trialsLoopEnd() {
-    psychoJS.experiment.removeLoop(prac_trials);
+function trialsLoopEnd() {
+    psychoJS.experiment.removeLoop(trials);
 
     return Scheduler.Event.NEXT;
 }
 
 // --- trial functions --- 
-var trialComponents;
+var trialComponents, cueTarget, currentRep, trialIndex;
 // var word_1, word_2, cue, path;
 function trialRoutineBegin (snapshot) { // Prepare to start 'trial' routine
     return function () {
@@ -438,8 +446,16 @@ function trialRoutineBegin (snapshot) { // Prepare to start 'trial' routine
             secs: -1
         });
         merged_audio.setVolume(1.0)
-
-        switch (cue) {
+        
+        if (cue === 'y') { // Set cue text - 1 of 4, randomized, no-repeats
+            trialIndex = snapshot.thisIndex
+            currentRep = snapshot.thisRepN 
+            cueTarget = cueList[trialIndex][currentRep]
+            } else {
+                cueTarget = ''
+            }
+            
+        switch (cueTarget) {
             case 'short_valid':
                 cue_stim.setText(response_1.text);
                 break;
@@ -593,8 +609,6 @@ function trialRoutineEnd(snapshot) {
         if (response.clicked_name) {psychoJS.experiment.addData('response', response.clicked_name[0])};
         psychoJS.experiment.addData('rand_foil_1', response_3.text);
         psychoJS.experiment.addData('rand_foil_2', response_4.text);
-
-        // Debugging    
 
         // the Routine "trial" was not non-slip safe, so reset the non-slip timer
         routineTimer.reset();
