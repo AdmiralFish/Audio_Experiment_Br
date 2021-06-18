@@ -87,8 +87,21 @@ dialogCancelScheduler.add(quitPsychoJS, '', false);
 // -- RESOURCES --
 let resources = [
     {'name': './resources/speaker_icon.png', 'path': './resources/speaker_icon.png'},
-    {'name': 'prac_trial_computer.csv', 'path': './resources/prac_trial_computer.csv'},
-    {'name': 'foils.csv', 'path': './resources/foils.csv'} // FOR TESTING 
+    {'name': 'prac_trial_computer.csv', 'path': './resources/prac_trial_computer.csv'},// FOR TESTING
+    {'name': 'foils.csv', 'path': './resources/foils.csv'},
+    {'name': 'practice_cue0.mp3', 'path': './resources/practice_cue0.mp3'},   
+    {'name': 'resources/practice_cue0.mp3', 'path': './resources/practice_cue0.mp3'},
+    {'name': 'resources/practice_cue1.mp3', 'path': './resources/practice_cue1.mp3'},
+    {'name': 'resources/practice_cue2.mp3', 'path': './resources/practice_cue2.mp3'},
+    {'name': 'resources/practice_cue3.mp3', 'path': './resources/practice_cue3.mp3'},
+    {'name': 'resources/practice_cue4.mp3', 'path': './resources/practice_cue4.mp3'},
+    {'name': 'resources/practice_cue5.mp3', 'path': './resources/practice_cue6.mp3'},
+    {'name': 'resources/practice_cue7.mp3', 'path': './resources/practice_cue5.mp3'},
+    {'name': 'resources/practice_cue6.mp3', 'path': './resources/practice_cue7.mp3'},
+    {'name': 'resources/practice_cue8.mp3', 'path': './resources/practice_cue8.mp3'},
+    {'name': 'resources/practice_cue9.mp3', 'path': './resources/practice_cue9.mp3'},
+    {'name': 'resources/practice_cue10.mp3', 'path': './resources/practice_cue10.mp3'},
+    {'name': 'resources/practice_cue11.mp3', 'path': './resources/practice_cue11.mp3'}
 ] // {'name': Path, 'path', Path}
 
 function resourceUpdater (csv_path) {
@@ -101,6 +114,7 @@ function resourceUpdater (csv_path) {
                 // resources.push({'name': csv[i][3], 'path': csv[i][3]});
                 resources.push({'name': csv[i][3], 'path': './' + csv[i][3]})
             }}})}
+
 resourceUpdater('./resources/prac_trial_computer.csv')
 // resourceUpdater('PATH')
 console.log(resources)
@@ -108,9 +122,10 @@ console.log(resources)
 psychoJS.start({
     expName: expName,
     expInfo: expInfo,
-    resources: resources 
+    resources: resources
 });
 
+console.log(psychoJS.resources)
 // Set Logger
 psychoJS.experimentLogger.setLevel(core.Logger.ServerLevel.EXP);
 
@@ -156,7 +171,7 @@ function textObj (name, text='', height=0.1, colour='white') {
 // Initialize Variables for each component
 var globalClock, routineTimer, t, frameN, continueRoutine, gotValidClick, prevButtonState, _mouseButtons // init Global Components
 var text, textDisplayClock, textDisplayText, textDisplayInput; // init textDisplay Components
-var trialClock, primer, speaker_icon, merged_audio, response_1, response_2, response_3, response_4, response, no_resp // init trial Components
+var trialClock, primer, cue_stim, speaker_icon, merged_audio, response_1, response_2, response_3, response_4, response, no_resp // init trial Components
 var locations = [[(- 0.5), 0.5], [0.5, 0.5], [(- 0.5), (- 0.5)], [0.5, (- 0.5)]];
 
 // Create Randomised Foil List
@@ -189,6 +204,7 @@ function experimentInit() {
     // "trial" Routine Components
     trialClock = new util.Clock();
     primer = new visual.TextStim(textObj("primer", text='X'));
+    cue_stim = new visual.TextStim(textObj("cue_stim", text='X'));
     speaker_icon = new visual.ImageStim({
         win: psychoJS.window,
         name: 'speaker_icon', units: undefined,
@@ -344,10 +360,10 @@ function textDisplayRoutineEnd(snapshot) {
 };
 
 // Helper --> Bundles above 3 functions - add a text screen with given message to scheduler
-function textScreen(message) {
-    flowScheduler.add(textDisplayRoutineBegin(message))
-    flowScheduler.add(textDisplayRoutineEachFrame())
-    flowScheduler.add(textDisplayRoutineEnd())
+function textScreen(message, scheduler=flowScheduler) {
+    scheduler.add(textDisplayRoutineBegin(message))
+    scheduler.add(textDisplayRoutineEachFrame())
+    scheduler.add(textDisplayRoutineEnd())
 }
 
 // --- prac_trial loop ---
@@ -356,7 +372,7 @@ var currentLoop;
 function prac_trialsLoopBegin(prac_trialsLoopScheduler) {
     prac_trials = new TrialHandler({
         psychoJS: psychoJS,
-        nReps: 1, method: TrialHandler.Method.RANDOM,
+        nReps: 2, method: TrialHandler.Method.RANDOM,
         extraInfo: expInfo, originPath: undefined,
         trialList:'prac_trial_computer.csv',
         seed: undefined, name: 'prac_trials'
@@ -364,6 +380,10 @@ function prac_trialsLoopBegin(prac_trialsLoopScheduler) {
 
     psychoJS.experiment.addLoop(prac_trials); // add the loop to the experiment 
     currentLoop = prac_trials; // we're now on the current loop
+    let breaks = 4; // Needs to be one more than desired amount of breaks
+
+
+    
 
     // Schedule all the trials in the trialList
     for (const thisPrac_trial of prac_trials) {
@@ -372,10 +392,13 @@ function prac_trialsLoopBegin(prac_trialsLoopScheduler) {
         prac_trialsLoopScheduler.add(trialRoutineBegin(snapshot));
         prac_trialsLoopScheduler.add(trialRoutineEachFrame(snapshot));
         prac_trialsLoopScheduler.add(trialRoutineEnd(snapshot));
+
+        // add break routines
+        if ((prac_trials.thisN !== 0) && prac_trials.thisN % (prac_trials.nTotal / breaks) === 0) {
+            let restMessage = `Take a break.\n\nPress here when you are ready to begin.\n\n\nYou have completed ${Math.round((prac_trials.thisN) / (prac_trials.nTotal)  * 100)} %`
+            textScreen(restMessage, prac_trialsLoopScheduler)
+        }
         prac_trialsLoopScheduler.add(endLoopIteration(prac_trialsLoopScheduler, snapshot));
-        // if (trials.name == "trials") {
-        //     loopScheduler.add(textScreen('Take a break.\n\nPress here when you are ready to begin.'))
-        // };
     }
 
     return Scheduler.Event.NEXT;
@@ -418,19 +441,19 @@ function trialRoutineBegin (snapshot) { // Prepare to start 'trial' routine
 
         switch (cue) {
             case 'short_valid':
-                primer.setText(response_1.text);
+                cue_stim.setText(response_1.text);
                 break;
             case 'long_valid':
-                primer.setText(response_2.text);
+                cue_stim.setText(response_2.text);
                 break;
             case 'short_foil':
-                primer.setText(response_3.text);
+                cue_stim.setText(response_3.text);
                 break;
             case 'long_foil':
-                primer.setText(response_4.text);
+                cue_stim.setText(response_4.text);
                 break;
             default:
-                primer.setText("XXXXXX")
+                cue_stim.setText("XXXXXX")
         }
 
         // setup lists for storing info about response
@@ -443,6 +466,7 @@ function trialRoutineBegin (snapshot) { // Prepare to start 'trial' routine
         // keep track of which components have finished
         trialComponents = [];
         trialComponents.push(primer);
+        trialComponents.push(cue_stim)
         trialComponents.push(speaker_icon);
         trialComponents.push(merged_audio);
         trialComponents.push(response_1);
@@ -467,11 +491,13 @@ function trialRoutineEachFrame (snapshot) {
         frameN = frameN + 1 // number of completed frames (so 0 is the first frame)
         
         // update/draw components on each frame
+        var cue_time = 0.2;
         drawStimUpdater(primer, 0.0, 0.5) // *primer* updates
-        drawStimUpdater(speaker_icon, 0.5, 3.0) // *speaker_icon** updates
+        drawStimUpdater(cue_stim, 0.6, cue_time)
+        drawStimUpdater(speaker_icon, cue_stim.tStart + cue_time + 0.1, 3.0) // *speaker_icon** updates
         
         // play audio while speaker is shown
-        if (t >= 0.5 && merged_audio.status === PsychoJS.Status.NOT_STARTED) {
+        if (t >= speaker_icon.tStart && merged_audio.status === PsychoJS.Status.NOT_STARTED) {
             merged_audio.tStart = t;
             merged_audio.frameNStart = frameN; // exact frame index
 
@@ -483,13 +509,13 @@ function trialRoutineEachFrame (snapshot) {
             merged_audio.status = PsychoJS.Status.FINISHED;
         }
 
-        drawStimUpdater(response_1, 3.5, 4.0) // Show Response Options
-        drawStimUpdater(response_2, 3.5, 4.0)
-        drawStimUpdater(response_3, 3.5, 4.0)
-        drawStimUpdater(response_4, 3.5, 4.0)
+        drawStimUpdater(response_1, speaker_icon.tStart + 3, 4.0) // Show Response Options
+        drawStimUpdater(response_2, speaker_icon.tStart + 3, 4.0)
+        drawStimUpdater(response_3, speaker_icon.tStart + 3, 4.0)
+        drawStimUpdater(response_4, speaker_icon.tStart + 3, 4.0)
 
         // Allow for & Monitor Clicked Response
-        if (t >= 3.5 && response.status === PsychoJS.Status.NOT_STARTED) {
+        if (t >= speaker_icon.tStart + 3 && response.status === PsychoJS.Status.NOT_STARTED) {
             response.tStart = t;
             response.frameNStart = frameN;
 
@@ -498,7 +524,7 @@ function trialRoutineEachFrame (snapshot) {
             prevButtonState = response.getPressed(); // if button is down already this ISN'T a new click
         }
         
-        frameRemains = 3.5 + 4.0 - psychoJS.window.monitorFramePeriod * 0.75; 
+        frameRemains = (speaker_icon.tStart + 3.0) + 4.0 - psychoJS.window.monitorFramePeriod * 0.75; 
         if (response.status === PsychoJS.Status.STARTED && t >= frameRemains) {
             response.status = PsychoJS.Status.FINISHED;
         }
@@ -525,7 +551,7 @@ function trialRoutineEachFrame (snapshot) {
             } 
         }
         // if no response - display *no_resp* cross
-        drawStimUpdater(no_resp, 7.5, 0.5)
+        drawStimUpdater(no_resp, response_1.tStart + 4.0, 0.5)
 
         // check for quit (typically the Esc key)
         if (psychoJS.experiment.experimentEnded || psychoJS.eventManager.getKeys({keyList:['escape']}).length > 0) {
