@@ -66,7 +66,7 @@ textScreen(instructionText);
 
 // prac_trials Loop
 const prac_trialsLoopScheduler = new Scheduler(psychoJS);
-flowScheduler.add(trialsLoopBegin, prac_trialsLoopScheduler, 4, 'prac_trials.csv', 'prac_trials', 0);
+flowScheduler.add(trialsLoopBegin, prac_trialsLoopScheduler, 1, 'prac_trials.csv', 'prac_trials', 0, false);
 flowScheduler.add(prac_trialsLoopScheduler);
 flowScheduler.add(trialsLoopEnd);
 
@@ -92,21 +92,55 @@ let resources = [
     {'name': './resources/speaker_icon.png', 'path': './resources/speaker_icon.png'},
     {'name': 'prac_trials.csv', 'path': './resources/prac_trials.csv'},// FOR TESTING
     {'name': 'trials.csv', 'path': './resources/trials.csv'},
+    {'name': 'catchTrials.csv', 'path': './resources/catchTrials.csv'},
     {'name': 'foils.csv', 'path': './resources/foils.csv'},
-    {'name': 'practice_cue0.mp3', 'path': './resources/practice_cue0.mp3'},   
-    {'name': 'resources/practice_cue0.mp3', 'path': './resources/practice_cue0.mp3'},
-    {'name': 'resources/practice_cue1.mp3', 'path': './resources/practice_cue1.mp3'},
-    {'name': 'resources/practice_cue2.mp3', 'path': './resources/practice_cue2.mp3'},
-    {'name': 'resources/practice_cue3.mp3', 'path': './resources/practice_cue3.mp3'},
-    {'name': 'resources/practice_cue4.mp3', 'path': './resources/practice_cue4.mp3'},
-    {'name': 'resources/practice_cue5.mp3', 'path': './resources/practice_cue6.mp3'},
-    {'name': 'resources/practice_cue7.mp3', 'path': './resources/practice_cue5.mp3'},
-    {'name': 'resources/practice_cue6.mp3', 'path': './resources/practice_cue7.mp3'},
-    {'name': 'resources/practice_cue8.mp3', 'path': './resources/practice_cue8.mp3'},
-    {'name': 'resources/practice_cue9.mp3', 'path': './resources/practice_cue9.mp3'},
-    {'name': 'resources/practice_cue10.mp3', 'path': './resources/practice_cue10.mp3'},
-    {'name': 'resources/practice_cue11.mp3', 'path': './resources/practice_cue11.mp3'}
-] // {'name': Path, 'path', Path}
+// for local debugging
+{'name': "resources/sound/prac_trials/practice_cue0.mp3", 'path': "./resources/sound/prac_trials/practice_cue0.mp3"},
+{'name': "resources/sound/prac_trials/practice_cue_human1.mp3", 'path': "./resources/sound/prac_trials/practice_cue_human1.mp3"},
+{'name': "resources/sound/prac_trials/practice_cue2.mp3", 'path': "./resources/sound/prac_trials/practice_cue2.mp3"},
+{'name': "resources/sound/prac_trials/practice_cue_human3.mp3", 'path': "./resources/sound/prac_trials/practice_cue_human3.mp3"},
+{'name': "resources/sound/prac_trials/practice_cue4.mp3", 'path': "./resources/sound/prac_trials/practice_cue4.mp3"},
+{'name': "resources/sound/prac_trials/practice_cue_human5.mp3", 'path': "./resources/sound/prac_trials/practice_cue_human5.mp3"},
+{'name': "resources/sound/prac_trials/practice_cue6.mp3", 'path': "./resources/sound/prac_trials/practice_cue6.mp3"},
+{'name': "resources/sound/prac_trials/practice_cue_human7.mp3", 'path': "./resources/sound/prac_trials/practice_cue_human7.mp3"},
+{'name': "resources/sound/prac_trials/practice_cue8.mp3", 'path': "./resources/sound/prac_trials/practice_cue8.mp3"},
+{'name': "resources/sound/prac_trials/practice_cue_human9.mp3", 'path': "./resources/sound/prac_trials/practice_cue_human9.mp3"},
+{'name': "resources/sound/prac_trials/practice_cue10.mp3", 'path': "./resources/sound/prac_trials/practice_cue10.mp3"},
+{'name': "resources/sound/prac_trials/practice_cue_human11.mp3", 'path': "./resources/sound/prac_trials/practice_cue_human11.mp3"},
+{'name': "resources/sound/trials/audio_stim_comp69.mp3", 'path': "./resources/sound/trials/audio_stim_comp69.mp3"},
+{'name': "resources/sound/trials/audio_stim_comp6.mp3", 'path': "./resources/sound/trials/audio_stim_comp6.mp3"},
+{'name': "resources/sound/trials/audio_stim_comp40.mp3", 'path': "./resources/sound/trials/audio_stim_comp40.mp3"},
+{'name': "resources/sound/trials/audio_stim_comp12.mp3", 'path': "./resources/sound/trials/audio_stim_comp12.mp3"},
+{'name': "resources/sound/trials/audio_stim_comp65.mp3", 'path': "./resources/sound/trials/audio_stim_comp65.mp3"},
+{'name': "resources/sound/trials/audio_stim_comp57.mp3", 'path': "./resources/sound/trials/audio_stim_comp57.mp3"},
+{'name': "resources/sound/trials/audio_stim_comp17.mp3", 'path': "./resources/sound/trials/audio_stim_comp17.mp3"},
+{'name': "resources/sound/trials/audio_stim_comp1.mp3", 'path': "./resources/sound/trials/audio_stim_comp1.mp3"},
+{'name': "resources/sound/trials/audio_stim_human35.mp3", 'path': "./resources/sound/trials/audio_stim_human35.mp3"},
+{'name': "resources/sound/trials/audio_stim_human42.mp3", 'path': "./resources/sound/trials/audio_stim_human42.mp3"},
+{'name': "resources/sound/trials/audio_stim_human67.mp3", 'path': "./resources/sound/trials/audio_stim_human67.mp3"},
+{'name': "resources/sound/trials/audio_stim_human47.mp3", 'path': "./resources/sound/trials/audio_stim_human47.mp3"},
+{'name': "resources/sound/trials/audio_stim_human0.mp3", 'path': "./resources/sound/trials/audio_stim_human0.mp3"},
+{'name': "resources/sound/trials/audio_stim_human6.mp3", 'path': "./resources/sound/trials/audio_stim_human6.mp3"},
+{'name': "resources/sound/trials/audio_stim_human50.mp3", 'path': "./resources/sound/trials/audio_stim_human50.mp3"},
+{'name': "resources/sound/trials/audio_stim_human64.mp3", 'path': "./resources/sound/trials/audio_stim_human64.mp3"},
+{'name': "resources/sound/catchTrials/audio_control_comp_project00.mp3", 'path': "./resources/sound/catchTrials/audio_control_comp_project00.mp3"},
+{'name': "resources/sound/catchTrials/audio_control_comp_project14.mp3", 'path': "./resources/sound/catchTrials/audio_control_comp_project14.mp3"},
+{'name': "resources/sound/catchTrials/audio_control_comp_project04.mp3", 'path': "./resources/sound/catchTrials/audio_control_comp_project04.mp3"},
+{'name': "resources/sound/catchTrials/audio_control_comp_project07.mp3", 'path': "./resources/sound/catchTrials/audio_control_comp_project07.mp3"},
+{'name': "resources/sound/catchTrials/audio_control_comp_project12.mp3", 'path': "./resources/sound/catchTrials/audio_control_comp_project12.mp3"},
+{'name': "resources/sound/catchTrials/audio_control_comp_project18.mp3", 'path': "./resources/sound/catchTrials/audio_control_comp_project18.mp3"},
+{'name': "resources/sound/catchTrials/audio_control_comp_project06.mp3", 'path': "./resources/sound/catchTrials/audio_control_comp_project06.mp3"},
+{'name': "resources/sound/catchTrials/audio_control_comp_project08.mp3", 'path': "./resources/sound/catchTrials/audio_control_comp_project08.mp3"},
+{'name': "resources/sound/catchTrials/audio_control_human_project12.mp3", 'path': "./resources/sound/catchTrials/audio_control_human_project12.mp3"},
+{'name': "resources/sound/catchTrials/audio_control_human_project01.mp3", 'path': "./resources/sound/catchTrials/audio_control_human_project01.mp3"},
+{'name': "resources/sound/catchTrials/audio_control_human_project14.mp3", 'path': "./resources/sound/catchTrials/audio_control_human_project14.mp3"},
+{'name': "resources/sound/catchTrials/audio_control_human_project04.mp3", 'path': "./resources/sound/catchTrials/audio_control_human_project04.mp3"},
+{'name': "resources/sound/catchTrials/audio_control_human_project07.mp3", 'path': "./resources/sound/catchTrials/audio_control_human_project07.mp3"},
+{'name': "resources/sound/catchTrials/audio_control_human_project02.mp3", 'path': "./resources/sound/catchTrials/audio_control_human_project02.mp3"},
+{'name': "resources/sound/catchTrials/audio_control_human_project06.mp3", 'path': "./resources/sound/catchTrials/audio_control_human_project06.mp3"},
+{'name': "resources/sound/catchTrials/audio_control_human_project09.mp3", 'path': "./resources/sound/catchTrials/audio_control_human_project09.mp3"}
+   
+] 
 
 function resourceUpdater (csv_path) {
     Papa.parse(csv_path,{
@@ -121,7 +155,8 @@ function resourceUpdater (csv_path) {
 
 resourceUpdater('./resources/prac_trials.csv')
 resourceUpdater('./resources/trials.csv')
-
+resourceUpdater('./resources/catchTrials.csv')
+console.log(resources)
 // START
 psychoJS.start({
     expName: expName,
@@ -372,9 +407,9 @@ function textScreen(message, scheduler=flowScheduler) {
 }
 
 // --- prac_trials loop ---
-var trials;
+var trials, catchTrials;
 var currentLoop;
-function trialsLoopBegin(trialsLoopScheduler, nReps, trialList, name, breaks) {
+function trialsLoopBegin(trialsLoopScheduler, nReps, trialList, name, breaks, catchTrialsOn = true) {
     trials = new TrialHandler({
         psychoJS: psychoJS,
         nReps: nReps, method: TrialHandler.Method.RANDOM,
@@ -383,19 +418,62 @@ function trialsLoopBegin(trialsLoopScheduler, nReps, trialList, name, breaks) {
         seed: undefined, name: name
     });
 
+    if (catchTrialsOn) {
+        catchTrials = new TrialHandler({
+            psychoJS: psychoJS,
+            nReps: 1, method: TrialHandler.Method.RANDOM,
+            extraInfo: expInfo, originPath: undefined,
+            trialList: 'catchTrials.csv',
+            seed: undefined, name: 'catchTrials'
+        })
+    }
+    
     psychoJS.experiment.addLoop(trials); // add the loop to the experiment 
     currentLoop = trials; // we're now on the current loop
 
     breaks = breaks; // Needs to be one more than desired amount of breaks
-    cueList = []
-    shuffleArray(cueTargets)
+    cueList = [];
+    var catchTrialIndex = [];
+    var catchIndex = 0;
+    var tempIndex;
+    // function randomCatchTrialIndex () {
+        while (catchTrialIndex.length < 2) {
+            tempIndex = Math.floor(Math.random() * (trials.nTotal / trials.nReps));
+            if (!(tempIndex in catchTrialIndex)) {
+                catchTrialIndex.push(tempIndex)
+            } } 
+        // }
 
+    let catchTrialsFunctionHolder = [];
+    for (const this_trial of catchTrials){
+        snapshot = catchTrials.getSnapshot();
+        catchTrialsFunctionHolder.push(snapshot)
+    }
+
+    var snapshot;
     // Schedule all the trials in the trialList
     for (const this_trial of trials) {
-        const snapshot = trials.getSnapshot();
         shuffleArray(cueTargets)
-        cueList.push(cueTargets.slice())
+        cueList.push(cueTargets.slice()) //
+        
+        // if (trials.thisTrialN = 0){
+        //     catchTrialIndex = []
+        //     randomCatchTrialIndex()
+        // }
 
+        // add catchTrials
+        if (catchTrialsOn && catchTrialIndex.includes(trials.thisTrialN)) {
+            snapshot = catchTrialsFunctionHolder[catchIndex];
+            trialsLoopScheduler.add(importConditions(snapshot));
+            trialsLoopScheduler.add(trialRoutineBegin(snapshot));
+            trialsLoopScheduler.add(trialRoutineEachFrame(snapshot));
+            trialsLoopScheduler.add(trialRoutineEnd(snapshot));
+            trialsLoopScheduler.add(endLoopIteration(trialsLoopScheduler, snapshot))
+            catchIndex += 1;
+        }
+
+        // add trials
+        snapshot = trials.getSnapshot();
         trialsLoopScheduler.add(importConditions(snapshot));
         trialsLoopScheduler.add(trialRoutineBegin(snapshot));
         trialsLoopScheduler.add(trialRoutineEachFrame(snapshot));
@@ -406,6 +484,7 @@ function trialsLoopBegin(trialsLoopScheduler, nReps, trialList, name, breaks) {
             let restMessage = `Take a break.\n\nPress here when you are ready to begin.\n\n\nYou have completed ${Math.round((trials.thisN) / (trials.nTotal)  * 100)} %`
             textScreen(restMessage, trialsLoopScheduler)
         }
+
         trialsLoopScheduler.add(endLoopIteration(trialsLoopScheduler, snapshot));
     }
 
