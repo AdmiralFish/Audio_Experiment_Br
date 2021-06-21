@@ -58,24 +58,24 @@ psychoJS.scheduleCondition(function() { return (psychoJS.gui.dialogComponent.but
 flowScheduler.add(updateInfo); // add timeStamp 
 flowScheduler.add(experimentInit); // initialize components 
 
-var introText = 'Thank you for agreeing to take part.\n\nThe session will begin with a practice set to familiarise you with the task. \n\nClick the screen when you are ready to continue.';
-textScreen(introText);
+// var introText = 'Thank you for agreeing to take part.\n\nThe session will begin with a practice set to familiarise you with the task. \n\nClick the screen when you are ready to continue.';
+// textScreen(introText);
 
-var instructionText = 'You will see a word flash on your screen, followed by a short and possibly ambiguous audio clip of words being spoken.\n\nAfter, you will be presented with four words.\n\nClick the word you heard most clearly.\n\nYou will only have 4 seconds to respond.\n\nWhen you are ready to practice, click the screen.';
-textScreen(instructionText);
+// var instructionText = 'You will see a word flash on your screen, followed by a short and possibly ambiguous audio clip of words being spoken.\n\nAfter, you will be presented with four words.\n\nClick the word you heard most clearly.\n\nYou will only have 4 seconds to respond.\n\nWhen you are ready to practice, click the screen.';
+// textScreen(instructionText);
 
-// prac_trials Loop
-const prac_trialsLoopScheduler = new Scheduler(psychoJS);
-flowScheduler.add(trialsLoopBegin, prac_trialsLoopScheduler, 1, 'prac_trials.csv', 'prac_trials', 0, false);
-flowScheduler.add(prac_trialsLoopScheduler);
-flowScheduler.add(trialsLoopEnd);
+// // prac_trials Loop
+// const prac_trialsLoopScheduler = new Scheduler(psychoJS);
+// flowScheduler.add(trialsLoopBegin, prac_trialsLoopScheduler, 1, 'prac_trials.csv', 'prac_trials', 0, false);
+// flowScheduler.add(prac_trialsLoopScheduler);
+// flowScheduler.add(trialsLoopEnd);
 
 var startText = 'The practice trial is now over.\n\nWhen you are ready to begin, click the screen.';
 textScreen(startText);
 
 // trial Loop
 const trialsLoopScheduler = new Scheduler(psychoJS);
-flowScheduler.add(trialsLoopBegin, trialsLoopScheduler, 4, 'trials.csv', 'trials', 4);
+flowScheduler.add(trialsLoopBegin, trialsLoopScheduler, 4, 'trials.csv', 'trials', 8);
 flowScheduler.add(trialsLoopScheduler)
 flowScheduler.add(trialsLoopEnd)
 
@@ -139,7 +139,6 @@ let resources = [
 {'name': "resources/sound/catchTrials/audio_control_human_project02.mp3", 'path': "./resources/sound/catchTrials/audio_control_human_project02.mp3"},
 {'name': "resources/sound/catchTrials/audio_control_human_project06.mp3", 'path': "./resources/sound/catchTrials/audio_control_human_project06.mp3"},
 {'name': "resources/sound/catchTrials/audio_control_human_project09.mp3", 'path': "./resources/sound/catchTrials/audio_control_human_project09.mp3"}
-   
 ] 
 
 function resourceUpdater (csv_path) {
@@ -156,7 +155,7 @@ function resourceUpdater (csv_path) {
 resourceUpdater('./resources/prac_trials.csv')
 resourceUpdater('./resources/trials.csv')
 resourceUpdater('./resources/catchTrials.csv')
-console.log(resources)
+
 // START
 psychoJS.start({
     expName: expName,
@@ -211,12 +210,12 @@ var globalClock, routineTimer, t, frameN, continueRoutine, gotValidClick, prevBu
 var text, textDisplayClock, textDisplayText, textDisplayInput; // init textDisplay Components
 var trialClock, primer, cue_stim, speaker_icon, merged_audio, response_1, response_2, response_3, response_4, response, no_resp // init trial Components
 var locations = [[(- 0.5), 0.5], [0.5, 0.5], [(- 0.5), (- 0.5)], [0.5, (- 0.5)]];
-var cueTargets = ['short_valid', 'long_valid', 'short_foil', 'long_foil'];
+var cueTargets = [1,2,3,4]; // 1=SV, 2=LV, 3=SF, 4=LF
 var cueList = []
 
 // Create Randomised Foil List
-var foilList1 = [];
-var foilList2 = [];
+var foilList1, foilList2, foils1, foils2;
+foilList1 = foilList2 = foils1 = foils2 = []
 
 Papa.parse('./resources/foils.csv',{ // Populate Foil Lists from CSV
     download: true,
@@ -224,12 +223,20 @@ Papa.parse('./resources/foils.csv',{ // Populate Foil Lists from CSV
     complete: function(results){
         var csv = results.data;
         for (let i = 1; i < csv.length; i++){
-            foilList1.push(csv[i][0]);
-            foilList2.push(csv[i][1]);
+            foils1.push(csv[i][0]);
+            foils2.push(csv[i][1]);
         }}})
 
-shuffleArray(foilList1); // Randomise Foil Order
-shuffleArray(foilList2);
+function getFoil (foilList) {
+    if (foilList.length === 0){    
+        foilsList1 = foils1.slice()
+        foilsList2 = foils2.slice()             
+
+        shuffleArray(foilList1); // Randomise Foil Order
+        shuffleArray(foilList2);
+    }
+    return foilList.pop()
+    }
 
 // Initialize components for each Routine
 function experimentInit() { 
@@ -295,7 +302,7 @@ function drawStimUpdater (object, startTime, duration=false) {
     if (duration) {
         frameRemains = startTime + duration - psychoJS.window.monitorFramePeriod * 0.75;  // most of one frame period left
         if (object.status === PsychoJS.Status.STARTED && t >= frameRemains) {
-        object.setAutoDraw(false);
+            object.setAutoDraw(false);
         }
     }
 }; 
@@ -433,7 +440,7 @@ function trialsLoopBegin(trialsLoopScheduler, nReps, trialList, name, breaks, ca
 
     breaks = breaks; // Needs to be one more than desired amount of breaks
     cueList = [];
-    var catchTrialIndex = [];
+    var catchTrialIndex = [3, 7, 11, 15, 19, 23, 27, 31]; // change to blank if random catch trials
     var catchIndex = 0;
     var tempIndex;
     // function randomCatchTrialIndex () {
@@ -449,17 +456,13 @@ function trialsLoopBegin(trialsLoopScheduler, nReps, trialList, name, breaks, ca
         snapshot = catchTrials.getSnapshot();
         catchTrialsFunctionHolder.push(snapshot)
     }
+    shuffleArray(catchTrialsFunctionHolder);
 
     var snapshot;
     // Schedule all the trials in the trialList
     for (const this_trial of trials) {
         shuffleArray(cueTargets)
         cueList.push(cueTargets.slice()) //
-        
-        // if (trials.thisTrialN = 0){
-        //     catchTrialIndex = []
-        //     randomCatchTrialIndex()
-        // }
 
         // add catchTrials
         if (catchTrialsOn && catchTrialIndex.includes(trials.thisTrialN)) {
@@ -498,7 +501,7 @@ function trialsLoopEnd() {
 }
 
 // --- trial functions --- 
-var trialComponents, cueTarget, currentRep, trialIndex;
+var trialComponents, cueTarget;
 // var word_1, word_2, cue, path;
 function trialRoutineBegin (snapshot) { // Prepare to start 'trial' routine
     return function () {
@@ -516,8 +519,8 @@ function trialRoutineBegin (snapshot) { // Prepare to start 'trial' routine
 
         response_1.setText(word_1); // Set correct choice 1 & 2
         response_2.setText(word_2);
-        response_3.setText(foilList1.pop()); // Set 2 random foils
-        response_4.setText(foilList2.pop());
+        response_3.setText(getFoil(foilList1)); // Set 2 random foils
+        response_4.setText(getFoil(foilList2));
 
         merged_audio = new sound.Sound({ // Set path of audio clip
             win: psychoJS.window,
@@ -526,25 +529,23 @@ function trialRoutineBegin (snapshot) { // Prepare to start 'trial' routine
         });
         merged_audio.setVolume(1.0)
         
-        if (cue === 'y') { // Set cue text - 1 of 4, randomized, no-repeats
-            trialIndex = snapshot.thisIndex
-            currentRep = snapshot.thisRepN 
-            cueTarget = cueList[trialIndex][currentRep]
+        if (snapshot.name === 'trials') { // Set cue text - 1 of 4, randomized, no-repeats
+            cueTarget = cueList[snapshot.thisIndex][snapshot.thisRepN]
             } else {
                 cueTarget = ''
             }
-            
-        switch (cueTarget) {
-            case 'short_valid':
+        
+        switch (cueTarget) { // Change text of cue 
+            case 1: //'shortValid'
                 cue_stim.setText(response_1.text);
                 break;
-            case 'long_valid':
+            case 2://'longValid'
                 cue_stim.setText(response_2.text);
                 break;
-            case 'short_foil':
+            case 3://'shortFoil'
                 cue_stim.setText(response_3.text);
                 break;
-            case 'long_foil':
+            case 4: //'longFoil'
                 cue_stim.setText(response_4.text);
                 break;
             default:
@@ -578,7 +579,7 @@ function trialRoutineBegin (snapshot) { // Prepare to start 'trial' routine
         return Scheduler.Event.NEXT;
     }};
 
-var _mouseXYs;
+var _mouseXYs, cueTime, primerTime;
 function trialRoutineEachFrame (snapshot) {
     return function () {
         // --- Loop for each frame of Routine 'trial' ---
@@ -586,13 +587,20 @@ function trialRoutineEachFrame (snapshot) {
         frameN = frameN + 1 // number of completed frames (so 0 is the first frame)
         
         // update/draw components on each frame
-        var cue_time = 0.2;
-        drawStimUpdater(primer, 0.0, 0.5) // *primer* updates
-        drawStimUpdater(cue_stim, 0.6, cue_time)
-        drawStimUpdater(speaker_icon, cue_stim.tStart + cue_time + 0.1, 3.0) // *speaker_icon** updates
+        primerTime = 2.0 + Math.random()
+        if (cue === 'short'){
+            cueTime = 0.2
+        } else {
+            cueTime = 1.2
+        }
+
+        // Start Displaying Components 
+        drawStimUpdater(primer, 0.0, primerTime) // *primer* updates
+        drawStimUpdater(cue_stim, primer.tStart + primerTime, cueTime)
+        drawStimUpdater(speaker_icon, cue_stim.tStart + cueTime, 3.0) // *speaker_icon** updates
         
         // play audio while speaker is shown
-        if (t >= speaker_icon.tStart && merged_audio.status === PsychoJS.Status.NOT_STARTED) {
+        if (t >= (cue_stim.tStart + cueTime) && cue_stim.status === PsychoJS.Status.FINISHED && merged_audio.status === PsychoJS.Status.NOT_STARTED) {
             merged_audio.tStart = t;
             merged_audio.frameNStart = frameN; // exact frame index
 
@@ -686,6 +694,7 @@ function trialRoutineEnd(snapshot) {
         // -- Store Data --
         if (response.time) {psychoJS.experiment.addData('response.time', response.time[0])};
         if (response.clicked_name) {psychoJS.experiment.addData('response', response.clicked_name[0])};
+        psychoJS.experiment.addData('cueTarget', cueTarget);
         psychoJS.experiment.addData('rand_foil_1', response_3.text);
         psychoJS.experiment.addData('rand_foil_2', response_4.text);
 
