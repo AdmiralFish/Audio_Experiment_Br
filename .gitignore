@@ -1,1 +1,5 @@
 .vscode
+
+# Local files for debugging 
+/node_modules
+package-lock.json
