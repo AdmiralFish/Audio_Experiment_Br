@@ -53,22 +53,22 @@ const dialogCancelScheduler = new Scheduler(psychoJS);
 psychoJS.scheduleCondition(function() { return (psychoJS.gui.dialogComponent.button === 'OK'); }, flowScheduler, dialogCancelScheduler);
 
 /**************** ------------------------------ FLOW SCHEDULER ------------------------------ 
-                                          Is run if participant presses OK      *************/                  
+                                          Is run if participant presses OK                     *************/                  
 
 flowScheduler.add(updateInfo); // add timeStamp 
 flowScheduler.add(experimentInit); // initialize components 
 
-// var introText = 'Thank you for agreeing to take part.\n\nThe session will begin with a practice set to familiarise you with the task. \n\nClick the screen when you are ready to continue.';
-// textScreen(introText);
+var introText = 'Thank you for agreeing to take part.\n\nThe session will begin with a practice set to familiarise you with the task. \n\nClick the screen when you are ready to continue.';
+textScreen(introText);
 
-// var instructionText = 'You will see a word flash on your screen, followed by a short and possibly ambiguous audio clip of words being spoken.\n\nAfter, you will be presented with four words.\n\nClick the word you heard most clearly.\n\nYou will only have 4 seconds to respond.\n\nWhen you are ready to practice, click the screen.';
-// textScreen(instructionText);
+var instructionText = 'You will see a word flash on your screen, followed by a short and possibly ambiguous audio clip of words being spoken.\n\nAfter, you will be presented with four words.\n\nClick the word you heard most clearly.\n\nYou will only have 4 seconds to respond.\n\nWhen you are ready to practice, click the screen.';
+textScreen(instructionText);
 
-// // prac_trials Loop
-// const prac_trialsLoopScheduler = new Scheduler(psychoJS);
-// flowScheduler.add(trialsLoopBegin, prac_trialsLoopScheduler, 1, 'prac_trials.csv', 'prac_trials', 0, false);
-// flowScheduler.add(prac_trialsLoopScheduler);
-// flowScheduler.add(trialsLoopEnd);
+// prac_trials Loop
+const prac_trialsLoopScheduler = new Scheduler(psychoJS);
+flowScheduler.add(trialsLoopBegin, prac_trialsLoopScheduler, 1, 'prac_trials.csv', 'prac_trials', 0, false);
+flowScheduler.add(prac_trialsLoopScheduler);
+flowScheduler.add(trialsLoopEnd);
 
 var startText = 'The practice trial is now over.\n\nWhen you are ready to begin, click the screen.';
 textScreen(startText);
@@ -413,8 +413,8 @@ function textScreen(message, scheduler=flowScheduler) {
     scheduler.add(textDisplayRoutineEnd())
 }
 
-// --- prac_trials loop ---
-var trials, catchTrials;
+// --- trials loop ---
+var trials, catchTrials, catchTrialsFunctionHolder;
 var currentLoop;
 function trialsLoopBegin(trialsLoopScheduler, nReps, trialList, name, breaks, catchTrialsOn = true) {
     trials = new TrialHandler({
@@ -433,6 +433,14 @@ function trialsLoopBegin(trialsLoopScheduler, nReps, trialList, name, breaks, ca
             trialList: 'catchTrials.csv',
             seed: undefined, name: 'catchTrials'
         })
+
+        catchTrialsFunctionHolder = [];
+        for (const this_trial of catchTrials){
+            snapshot = catchTrials.getSnapshot();
+            catchTrialsFunctionHolder.push(snapshot)
+        }
+
+        shuffleArray(catchTrialsFunctionHolder);
     }
     
     psychoJS.experiment.addLoop(trials); // add the loop to the experiment 
@@ -444,19 +452,12 @@ function trialsLoopBegin(trialsLoopScheduler, nReps, trialList, name, breaks, ca
     var catchIndex = 0;
     var tempIndex;
     // function randomCatchTrialIndex () {
-        while (catchTrialIndex.length < 2) {
-            tempIndex = Math.floor(Math.random() * (trials.nTotal / trials.nReps));
-            if (!(tempIndex in catchTrialIndex)) {
-                catchTrialIndex.push(tempIndex)
-            } } 
-        // }
-
-    let catchTrialsFunctionHolder = [];
-    for (const this_trial of catchTrials){
-        snapshot = catchTrials.getSnapshot();
-        catchTrialsFunctionHolder.push(snapshot)
-    }
-    shuffleArray(catchTrialsFunctionHolder);
+        // while (catchTrialIndex.length < 2) {
+        //     tempIndex = Math.floor(Math.random() * (trials.nTotal / trials.nReps));
+        //     if (!(tempIndex in catchTrialIndex)) {
+        //         catchTrialIndex.push(tempIndex)
+        //     } } 
+        // // }
 
     var snapshot;
     // Schedule all the trials in the trialList
@@ -529,7 +530,7 @@ function trialRoutineBegin (snapshot) { // Prepare to start 'trial' routine
         });
         merged_audio.setVolume(1.0)
         
-        if (snapshot.name === 'trials') { // Set cue text - 1 of 4, randomized, no-repeats
+        if (snapshot.name !== 'catchTrials') { // Set cue text - 1 of 4, randomized, no-repeats
             cueTarget = cueList[snapshot.thisIndex][snapshot.thisRepN]
             } else {
                 cueTarget = ''
