@@ -214,8 +214,11 @@ var cueTargets = [1,2,3,4]; // 1=SV, 2=LV, 3=SF, 4=LF
 var cueList = []
 
 // Create Randomised Foil List
-var foilList1, foilList2, foils1, foils2;
-foilList1 = foilList2 = foils1 = foils2 = []
+var foilList1, foilList2, foils1, foils2
+foilList1 = []
+foilList2 = []
+foils1 = [] 
+foils2 = []
 
 Papa.parse('./resources/foils.csv',{ // Populate Foil Lists from CSV
     download: true,
@@ -227,16 +230,15 @@ Papa.parse('./resources/foils.csv',{ // Populate Foil Lists from CSV
             foils2.push(csv[i][1]);
         }}})
 
-function getFoil (foilList) {
-    if (foilList.length === 0){    
-        foilsList1 = foils1.slice()
-        foilsList2 = foils2.slice()             
+function foilRefresh () {
+    if (foilList1.length === 0 || foilList2.length === 0){    
+        foilList1 = foils1.slice()
+        foilList2 = foils2.slice()             
 
         shuffleArray(foilList1); // Randomise Foil Order
         shuffleArray(foilList2);
     }
-    return foilList.pop()
-    }
+}
 
 // Initialize components for each Routine
 function experimentInit() { 
@@ -520,8 +522,9 @@ function trialRoutineBegin (snapshot) { // Prepare to start 'trial' routine
 
         response_1.setText(word_1); // Set correct choice 1 & 2
         response_2.setText(word_2);
-        response_3.setText(getFoil(foilList1)); // Set 2 random foils
-        response_4.setText(getFoil(foilList2));
+        foilRefresh();
+        response_3.setText(foilList1.pop()); // Set 2 random foils
+        response_4.setText(foilList2.pop());
 
         merged_audio = new sound.Sound({ // Set path of audio clip
             win: psychoJS.window,
