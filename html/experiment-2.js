@@ -165,7 +165,8 @@ let resources = [
     { 'name': "resources/sound/catchTrials/audio_control_human_project07.mp3", 'path': "./resources/sound/catchTrials/audio_control_human_project07.mp3" },
     { 'name': "resources/sound/catchTrials/audio_control_human_project02.mp3", 'path': "./resources/sound/catchTrials/audio_control_human_project02.mp3" },
     { 'name': "resources/sound/catchTrials/audio_control_human_project06.mp3", 'path': "./resources/sound/catchTrials/audio_control_human_project06.mp3" },
-    { 'name': "resources/sound/catchTrials/audio_control_human_project09.mp3", 'path': "./resources/sound/catchTrials/audio_control_human_project09.mp3" }
+    { 'name': "resources/sound/catchTrials/audio_control_human_project09.mp3", 'path': "./resources/sound/catchTrials/audio_control_human_project09.mp3" },
+    {'name': 'resources/sound/trials/audio_stim_original.mp3', 'path': 'resources/sound/trials/audio_stim_original.mp3'}
 ]
 
 resourceUpdater('./resources/prac_trials.csv');
