@@ -9,6 +9,7 @@ import { Scheduler } from './lib/util-2021.1.2.js';
 import * as visual from './lib/visual-2021.1.2.js';
 import * as sound from './lib/sound-2021.1.2.js';
 import * as util from './lib/util-2021.1.2.js';
+import './lib/HeadphoneCheck_Test/headphonesCheck.js'
 
 // --- Define Some Helper Functions --- 
 
@@ -173,21 +174,42 @@ resourceUpdater('./resources/prac_trials.csv');
 resourceUpdater('./resources/trials.csv');
 resourceUpdater('./resources/catchTrials.csv');
 
-// --> Experiment Start
-// START
-psychoJS.start({
-    expName: expName,
-    expInfo: expInfo,
-    resources: resources
-});
+// Set completion and fail Redirect URLs
+psychoJS.setRedirectUrls(`https://hullpsychology.eu.qualtrics.com/jfe/form/SV_aVrXerHhXZEtkai?id=${expInfo['participant']}&expComplete=true`, 
+    `https://hullpsychology.eu.qualtrics.com/jfe/form/SV_aVrXerHhXZEtkai?id=${expInfo['participant']}&expComplete=false`);
+
+// -- Set up a headphone check --
+const headphonesCheck = new HeadphonesCheck({maxAttempts:1,trialCount:1})
+headphonesCheck.checkHeadphones(handleHeadphonesCheckResult); // Start the Headphones Check and run handleHeadphonesCheckResult when complete
+
+/**
+ * Handle the result of the Headphones Check:
+ * if passed, continue the study; if failed, stop the study
+ * 
+ * @param {*} result - Returned from the checkHeadphones() method
+ */
+function handleHeadphonesCheckResult(result){
+    if (result) {
+         // Update non-complete URL to reflect hpc now complete 
+        
+        psychoJS.start({ // --> Experiment Start
+            expName: expName,
+            expInfo: expInfo,
+            resources: resources
+        })
+ 
+    } else {
+        $('body').html('<div style="text-align: center; font-size: 2em; color: #000; background-color: #fff; padding: 1em; margin: 1em;">The study has stopped<br>because you failed the headphones check.<br>Please wait to be redirected.</div>');
+        
+        setTimeout(function(){
+            window.location.replace(`https://hullpsychology.eu.qualtrics.com/jfe/form/SV_aVrXerHhXZEtkai?id=${expInfo['participant']}&expComplete=falseheadphoneCheck=fail`)
+        }, 3000);
+}}
 
 // Set Logger
 psychoJS.experimentLogger.setLevel(core.Logger.ServerLevel.EXP);
 
 // --> Update Experiment Info
-// Set Redirect URLs
-// psychoJS.setRedirectUrls('completionUrl', 'cancellationURL')
-
 var frameDur;
 /** Updates expInfo with metadata & pulls info from URL */
 function updateInfo() {
