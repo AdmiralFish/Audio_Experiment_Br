@@ -67,7 +67,7 @@ flowScheduler.add(experimentInit); // initialize components
 var introText = 'Thank you for agreeing to take part.\n\nThe session will begin with a practice set to familiarise you with the task. \n\nClick the screen when you are ready to continue.';
 addTextScreen(introText);
 
-var instructionText = 'You will see a word flash on your screen, followed by a short and possibly ambiguous audio clip of words being spoken.\n\nAfter, you will be presented with four words.\n\nClick the word you heard most clearly.\n\nYou will only have 4 seconds to respond.\n\nWhen you are ready to practice, click the screen.';
+var instructionText = 'You will see a word presented on your screen, followed by a short and possibly ambiguous audio clip of words being spoken.\n\nAfter, you will be presented with four words.\n\nClick the word you heard most clearly. You will only have 4 seconds to respond.\n\nWhen you are ready to practice, click the screen.';
 addTextScreen(instructionText);
 
 // pracTrials Loop
