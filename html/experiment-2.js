@@ -87,16 +87,13 @@ flowScheduler.add(trialsLoopEnd)
 
 flowScheduler.add(quitPsychoJS, "The experiment is now complete.\nPress 'Ok' to continue.", true); 
 
-var endText = 'Thank you for your time.\n\nThe experiment is now complete.\n\nPlease wait for results to finish uploading before closing the window.'
-addTextScreen(endText);
-
 // quit if user presses Cancel in dialog box:
 dialogCancelScheduler.add(quitPsychoJS, 'Experiment cancelled', false);
 
 /* ------------------------------ END OF FLOW SCHEDULER ------------------------------ 
 */
 
-// --> Define experiment resources
+// --> Define experiment resources <-- 
 
 /**
  * Updates the resources to include each resource in a given CSV file.
@@ -179,7 +176,7 @@ psychoJS.setRedirectUrls(`https://hullpsychology.eu.qualtrics.com/jfe/form/SV_aV
     `https://hullpsychology.eu.qualtrics.com/jfe/form/SV_aVrXerHhXZEtkai?id=${expInfo['participant']}&expComplete=false`);
 
 // -- Set up a headphone check --
-const headphonesCheck = new HeadphonesCheck({maxAttempts:1,trialCount:1})
+const headphonesCheck = new HeadphonesCheck() // for testing use: {maxAttempts:1,trialCount:1}
 headphonesCheck.checkHeadphones(handleHeadphonesCheckResult); // Start the Headphones Check and run handleHeadphonesCheckResult when complete
 
 /**
@@ -202,7 +199,7 @@ function handleHeadphonesCheckResult(result){
         $('body').html('<div style="text-align: center; font-size: 2em; color: #000; background-color: #fff; padding: 1em; margin: 1em;">The study has stopped<br>because you failed the headphones check.<br>Please wait to be redirected.</div>');
         
         setTimeout(function(){
-            window.location.replace(`https://hullpsychology.eu.qualtrics.com/jfe/form/SV_aVrXerHhXZEtkai?id=${expInfo['participant']}&expComplete=falseheadphoneCheck=fail`)
+            window.location.replace(`https://hullpsychology.eu.qualtrics.com/jfe/form/SV_aVrXerHhXZEtkai?id=${expInfo['participant']}&expComplete=false&headphoneCheck=fail`)
         }, 3000);
 }}
 
@@ -448,7 +445,7 @@ function textDisplayRoutineEachFrame(snapshot) {
 
         // check for quit (typically the Esc key)
         if (psychoJS.experiment.experimentEnded || psychoJS.eventManager.getKeys({ keyList: ['escape'] }).length > 0) {
-            return quitPsychoJS('The [Escape] key was pressed. Goodbye!', false);
+            return quitPsychoJS('The [Escape] key was pressed - the experiment has finished. Please press below to continue.', false);
         }
 
         // check if the Routine should terminate
