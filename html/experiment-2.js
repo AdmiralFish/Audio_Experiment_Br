@@ -70,20 +70,20 @@ addTextScreen(introText);
 var instructionText = 'You will see a word presented on your screen, followed by a short and possibly ambiguous audio clip of words being spoken.\n\nAfter, you will be presented with four words.\n\nClick the word you heard most clearly. You will only have 4 seconds to respond.\n\nWhen you are ready to practice, click the screen.';
 addTextScreen(instructionText);
 
-// pracTrials Loop
-const pracTrialsLoopScheduler = new Scheduler(psychoJS);
-flowScheduler.add(trialsLoopBegin, pracTrialsLoopScheduler, 1, 'prac_trials.csv', 'prac_trials', 0, false);
-flowScheduler.add(pracTrialsLoopScheduler);
-flowScheduler.add(trialsLoopEnd);
+// // pracTrials Loop
+// const pracTrialsLoopScheduler = new Scheduler(psychoJS);
+// flowScheduler.add(trialsLoopBegin, pracTrialsLoopScheduler, 1, 'prac_trials.csv', 'prac_trials', 0, false);
+// flowScheduler.add(pracTrialsLoopScheduler);
+// flowScheduler.add(trialsLoopEnd);
 
-var startText = 'The practice trial is now over.\n\nWhen you are ready to begin, click the screen.';
-addTextScreen(startText);
+// var startText = 'The practice trial is now over.\n\nWhen you are ready to begin, click the screen.';
+// addTextScreen(startText);
 
-// trial Loop
-const trialsLoopScheduler = new Scheduler(psychoJS);
-flowScheduler.add(trialsLoopBegin, trialsLoopScheduler, 4, 'trials.csv', 'trials', 8);
-flowScheduler.add(trialsLoopScheduler)
-flowScheduler.add(trialsLoopEnd)
+// // trial Loop
+// const trialsLoopScheduler = new Scheduler(psychoJS);
+// flowScheduler.add(trialsLoopBegin, trialsLoopScheduler, 4, 'trials.csv', 'trials', 8);
+// flowScheduler.add(trialsLoopScheduler)
+// flowScheduler.add(trialsLoopEnd)
 
 flowScheduler.add(quitPsychoJS, "The experiment is now complete.\nPress 'Ok' to continue.", true); 
 
@@ -171,16 +171,16 @@ resourceUpdater('./resources/prac_trials.csv');
 resourceUpdater('./resources/trials.csv');
 resourceUpdater('./resources/catchTrials.csv');
 
+const urlParameters = util.getUrlParameters(); // Save ID from URL in-case headphone check fails
+expInfo['participant'] = urlParameters.get('participant')
+
 // Set completion and fail Redirect URLs
 psychoJS.setRedirectUrls(`https://hullpsychology.eu.qualtrics.com/jfe/form/SV_aVrXerHhXZEtkai?ID=${expInfo['participant']}&expComplete=true`, 
     `https://hullpsychology.eu.qualtrics.com/jfe/form/SV_aVrXerHhXZEtkai?ID=${expInfo['participant']}&expComplete=false`);
 
 // -- Set up a headphone check --
-const headphonesCheck = new HeadphonesCheck() // for testing use: {maxAttempts:1,trialCount:1}
+const headphonesCheck = new HeadphonesCheck({passMark:1,trialCount:1}) // for testing use: {passMark:1,trialCount:1}
 headphonesCheck.checkHeadphones(handleHeadphonesCheckResult); // Start the Headphones Check and run handleHeadphonesCheckResult when complete
-
-const urlParameters = util.getUrlParameters(); // Save ID from URL in-case headphone check fails
-expInfo['participant'] = urlParameters.get('participant')
 
 /**
  * Handle the result of the Headphones Check:
