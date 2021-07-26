@@ -172,12 +172,15 @@ resourceUpdater('./resources/trials.csv');
 resourceUpdater('./resources/catchTrials.csv');
 
 // Set completion and fail Redirect URLs
-psychoJS.setRedirectUrls(`https://hullpsychology.eu.qualtrics.com/jfe/form/SV_aVrXerHhXZEtkai?id=${expInfo['participant']}&expComplete=true`, 
-    `https://hullpsychology.eu.qualtrics.com/jfe/form/SV_aVrXerHhXZEtkai?id=${expInfo['participant']}&expComplete=false`);
+psychoJS.setRedirectUrls(`https://hullpsychology.eu.qualtrics.com/jfe/form/SV_aVrXerHhXZEtkai?ID=${expInfo['participant']}&expComplete=true`, 
+    `https://hullpsychology.eu.qualtrics.com/jfe/form/SV_aVrXerHhXZEtkai?ID=${expInfo['participant']}&expComplete=false`);
 
 // -- Set up a headphone check --
 const headphonesCheck = new HeadphonesCheck() // for testing use: {maxAttempts:1,trialCount:1}
 headphonesCheck.checkHeadphones(handleHeadphonesCheckResult); // Start the Headphones Check and run handleHeadphonesCheckResult when complete
+
+const urlParameters = util.getUrlParameters(); // Save ID from URL in-case headphone check fails
+expInfo['participant'] = urlParameters.get('participant')
 
 /**
  * Handle the result of the Headphones Check:
@@ -199,7 +202,7 @@ function handleHeadphonesCheckResult(result){
         $('body').html('<div style="text-align: center; font-size: 2em; color: #000; background-color: #fff; padding: 1em; margin: 1em;">The study has stopped<br>because you failed the headphones check.<br>Please wait to be redirected.</div>');
         
         setTimeout(function(){
-            window.location.replace(`https://hullpsychology.eu.qualtrics.com/jfe/form/SV_aVrXerHhXZEtkai?id=${expInfo['participant']}&expComplete=false&headphoneCheck=fail`)
+            window.location.replace(`https://hullpsychology.eu.qualtrics.com/jfe/form/SV_aVrXerHhXZEtkai?ID=${expInfo['participant']}&expComplete=false&headphoneCheck=fail`)
         }, 3000);
 }}
 
