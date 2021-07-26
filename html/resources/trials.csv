@@ -15,6 +15,7 @@ RUBBER,PROPERTY,short,resources/sound/trials/audio_stim_human0.mp3
 MINER,EMERALD,short,resources/sound/trials/audio_stim_human6.mp3
 PARTY,SANCTUARY,short,resources/sound/trials/audio_stim_human50.mp3
 ROBBER,RATTLESNAKE,short,resources/sound/trials/audio_stim_human64.mp3
+BRAINSTORM,GREEN NEEDLE,short,resources/sound/trials/audio_stim_original.mp3
 DRIZZLE,CARDINAL,long,resources/sound/trials/audio_stim_comp69.mp3
 MINER,EMERALD,long,resources/sound/trials/audio_stim_comp6.mp3
 RECEIPT,LIMOUSINE,long,resources/sound/trials/audio_stim_comp40.mp3
@@ -31,5 +32,4 @@ RUBBER,PROPERTY,long,resources/sound/trials/audio_stim_human0.mp3
 MINER,EMERALD,long,resources/sound/trials/audio_stim_human6.mp3
 PARTY,SANCTUARY,long,resources/sound/trials/audio_stim_human50.mp3
 ROBBER,RATTLESNAKE,long,resources/sound/trials/audio_stim_human64.mp3
-BRAINSTORM,GREEN NEEDLE,short,resources/sound/trials/audio_stim_original.mp3
 BRAINSTORM,GREEN NEEDLE,long,resources/sound/trials/audio_stim_original.mp3
