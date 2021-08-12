@@ -3,5 +3,10 @@
 # Local files for debugging 
 /node_modules
 package-lock.json
+
+# Output Files
 data_export.xlsx
 ~$data_export.xlsx
+
+data_export_times.xlsx
+~data_export_times.xlsx
