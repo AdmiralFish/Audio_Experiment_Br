@@ -80,10 +80,10 @@ var startText = 'The practice trial is now over.\n\nWhen you are ready to begin,
 addTextScreen(startText);
 
 // trial Loop
-const trialsLoopScheduler = new Scheduler(psychoJS);
-flowScheduler.add(trialsLoopBegin, trialsLoopScheduler, 4, 'trials.csv', 'trials', 8);
-flowScheduler.add(trialsLoopScheduler)
-flowScheduler.add(trialsLoopEnd)
+// const trialsLoopScheduler = new Scheduler(psychoJS);
+// flowScheduler.add(trialsLoopBegin, trialsLoopScheduler, 4, 'trials.csv', 'trials', 8);
+// flowScheduler.add(trialsLoopScheduler)
+// flowScheduler.add(trialsLoopEnd)
 
 flowScheduler.add(quitPsychoJS, "The experiment is now complete.\nPress 'Ok' to continue.", true); 
 
